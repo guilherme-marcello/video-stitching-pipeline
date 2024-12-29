@@ -1,3 +1,16 @@
+# Image files
+*.jpg
+*.png
+
+# Matlab matrices
+*.mat
+
+# Zipped files
+*.zip
+
+# MacOS files
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
