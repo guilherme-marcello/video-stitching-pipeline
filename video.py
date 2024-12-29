@@ -95,6 +95,7 @@ class EnrichedVideo:
     """
     def __init__(self, frames: list[EnrichedFrame]):
         self.frames = frames
+        self.frames = sorted(self.frames, key=lambda frame: frame.get_number())
 
     @classmethod
     def from_input_directory(cls, input_dir: str):
