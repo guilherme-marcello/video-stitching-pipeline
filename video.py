@@ -47,7 +47,7 @@ class EnrichedFrame:
         """
         cv2.imwrite(output_path, self.frame)
 
-    def export(self, output_dir: str) -> None:
+    def export(self, output_dir: str = "./") -> None:
         """
         Export the frame and detections to the output directory.
         
