@@ -20,7 +20,7 @@ class EnrichedFrame:
     @classmethod
     def from_path(cls, image_path: str, yolo_path: str, number: int):
         frame = cv2.imread(image_path)
-        detections_bb = loadmat(yolo_path)["xyxy"] # bounding boxes
+        detections_bb = loadmat(yolo_path)["xyxy"] if yolo_path else [] # bounding boxes
         return cls(frame, detections_bb, number)
     
     def get_number(self) -> int:
@@ -34,7 +34,8 @@ class EnrichedFrame:
         output_path: str
             Path to the output .mat file.
         """
-        savemat(output_path, {"xyxy": self.detections_bb})
+        if self.has_detections():
+            savemat(output_path, {"xyxy": self.detections_bb})
 
     def _export_frame(self, output_path: str) -> None:
         """
@@ -76,7 +77,7 @@ class EnrichedFrame:
 
 
     def has_detections(self):
-        return self.detections_bb is not None
+        return len(self.detections_bb) > 0
     
     def show(self):
         """
@@ -86,7 +87,7 @@ class EnrichedFrame:
         for box in self.detections_bb:
             cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
         plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        plt.title("Frame")
+        plt.title(f"Frame {self.number}")
         plt.show()
 
 class EnrichedVideo:
@@ -127,12 +128,12 @@ class EnrichedVideo:
     def get_number_of_frames_with_detections(self):
         return sum([1 if frame.has_detections() else 0 for frame in self.frames])
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx) -> EnrichedFrame:
         return self.frames[idx]
 
     def __len__(self):
         return len(self.frames)
     
-    def __iter__(self):
+    def __iter__(self) -> EnrichedFrame:
         return iter(self.frames)
         
