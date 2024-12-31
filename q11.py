@@ -5,7 +5,7 @@ import os
 from scipy.io import loadmat, savemat
 import matplotlib.pyplot as plt
 
-from video import EnrichedVideo
+from video import EnrichedVideo, EnrichedFrame
 from vision import compute_homography
 
 class Q11Config:
@@ -80,15 +80,9 @@ def main(config: Q11Config):
     savemat("homography.mat", {"H": H})
 
     for frame in video:
+        frame: EnrichedFrame
         warped_frame = frame.transform(H)
-        warped_frame.show()
-
-    #warped_video = EnrichedVideo(frames=[frame.transform(H) for frame in video])
-
-    #for warped_frame in warped_video:
-    #    warped_frame.export("output_dir")
-    
-
+        warped_frame.export()    
 
 if __name__ == "__main__":
     config = parse_args()
