@@ -47,7 +47,7 @@ class EnrichedFrame:
         """
         cv2.imwrite(output_path, self.frame)
 
-    def export(self, output_dir: str = "./") -> None:
+    def export(self, prefix: str = "", output_dir: str = "./") -> None:
         """
         Export the frame and detections to the output directory.
         
@@ -55,8 +55,8 @@ class EnrichedFrame:
         output_dir: str
             Path to the output directory
         """
-        self._export_detections(os.path.join(output_dir, f"yolo_{self.number}.mat"))
-        self._export_frame(os.path.join(output_dir, f"img_{self.number}.jpg"))
+        self._export_detections(os.path.join(output_dir, f"{prefix}yolo_{self.number}.mat"))
+        self._export_frame(os.path.join(output_dir, f"{prefix}img_{self.number}.jpg"))
 
     def transform(self, H):
         """
