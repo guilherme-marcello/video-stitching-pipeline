@@ -1,6 +1,7 @@
 import os
-import cv2
+import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 from scipy.io import loadmat, savemat
 
 # our code
@@ -19,7 +20,7 @@ class EnrichedFrame:
 
     @classmethod
     def from_path(cls, image_path: str, yolo_path: str, number: int):
-        frame = cv2.imread(image_path)
+        frame = mpimg.imread(image_path)
         detections_bb = loadmat(yolo_path)["xyxy"] if yolo_path else [] # bounding boxes
         return cls(frame, detections_bb, number)
     
@@ -45,7 +46,7 @@ class EnrichedFrame:
         output_path: str
             Path to the output image file.
         """
-        cv2.imwrite(output_path, self.frame)
+        mpimg.imsave(output_path, self.frame)
 
     def export(self, prefix: str = "", output_dir: str = "./") -> None:
         """
@@ -84,9 +85,13 @@ class EnrichedFrame:
         Show the frame with the detections.
         """
         frame = self.frame.copy()
+        fig, ax = plt.subplots(1)
+        ax.imshow(frame)
+
         for box in self.detections_bb:
-            cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
-        plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+            rect = patches.Rectangle((box[0], box[1]), box[2] - box[0], box[3] - box[1], linewidth=2, edgecolor='g', facecolor='none')
+            ax.add_patch(rect)
+
         plt.title(f"Frame {self.number}")
         plt.show()
 

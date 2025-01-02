@@ -1,6 +1,5 @@
 import argparse
 import numpy as np
-import cv2
 import os
 from scipy.io import loadmat, savemat
 import matplotlib.pyplot as plt
@@ -61,19 +60,6 @@ def main(config: Q11Config):
     
     # load dst points
     dst_points = matches[:, 2:]
-
-    """
-    first_img = video[0]
-    gmaps_img = cv2.imread(config.google_maps_image) 
-
-    plt.imshow(first_img.frame)
-    plt.plot(src_points[:, 0], src_points[:, 1], 'Xr')
-    plt.show()
-   
-    plt.imshow(gmaps_img)
-    plt.plot(dst_points[:, 0], dst_points[:, 1], 'Xr')
-    plt.show()    
-    """
 
     # compute homography!
     H = compute_homography(src_points, dst_points)
