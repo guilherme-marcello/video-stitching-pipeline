@@ -13,16 +13,26 @@ class EnrichedFrame:
     This class represents a frame with yolo detections (if any).
     """
 
-    def __init__(self, frame, detections_bb, number=-1):
+    def __init__(self, frame, detections_bb, ids, classes, number=-1):
         self.frame = frame
         self.detections_bb = detections_bb
+        self.ids = ids
+        self.classes = classes
         self.number = number
 
     @classmethod
     def from_path(cls, image_path: str, yolo_path: str, number: int):
         frame = mpimg.imread(image_path)
-        detections_bb = loadmat(yolo_path)["xyxy"] if yolo_path else [] # bounding boxes
-        return cls(frame, detections_bb, number)
+        detections_bb, ids, classes = [], [], []
+        if yolo_path:
+            try:
+                detections = loadmat(yolo_path)
+                detections_bb = detections["xyxy"]
+                ids = detections["id"]
+                classes = detections["class"]
+            except Exception as e:
+                print(f"Error loading detections from {yolo_path}: {e}")
+        return cls(frame, detections_bb, ids, classes, number)
     
     def get_number(self) -> int:
         return self.number
@@ -36,7 +46,7 @@ class EnrichedFrame:
             Path to the output .mat file.
         """
         if self.has_detections():
-            savemat(output_path, {"xyxy": self.detections_bb})
+            savemat(output_path, {"xyxy": self.detections_bb, "id": self.ids, "class": self.classes})
 
     def _export_frame(self, output_path: str) -> None:
         """
@@ -74,7 +84,7 @@ class EnrichedFrame:
 
         warped_frame = vision.warp_image(self.frame, H, (height, width))
         warped_detections = [vision.warp_bounding_box(box, H) for box in self.detections_bb]
-        return EnrichedFrame(frame=warped_frame, detections_bb=warped_detections, number=self.number)
+        return EnrichedFrame(frame=warped_frame, detections_bb=warped_detections, ids=self.ids, classes=self.classes, number=self.number)
 
 
     def has_detections(self):
