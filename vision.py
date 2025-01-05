@@ -15,7 +15,7 @@ def warp_image(image, H, output_size) -> np.array:
     # Iterate over every pixel in the output image
     for y in range(height):
         for x in range(width):
-            # Transform (x, y) in the output image to (x', y') in the input image
+            # Transform (x, y) in the output image to (x', y') in the input image, that's why we use H_inv..!
             homogeneous_point = np.array([x, y, 1])
             transformed_point = np.dot(H_inv, homogeneous_point)
             transformed_point /= transformed_point[2]  # Normalize by z (homogeneous scale)
@@ -52,8 +52,7 @@ def warp_bounding_box(box, H) -> np.array:
 
 def compute_homography(src_pts, dst_pts):
     """
-    Compute the homography matrix H that maps src_pts to dst_pts
-    using the Direct Linear Transform (DLT) algorithm.
+    Compute the homography matrix H that maps src_pts to dst_pts.
     
     Parameters:
     src_pts: np.ndarray (N, 2)
@@ -73,8 +72,8 @@ def compute_homography(src_pts, dst_pts):
     for i in range(num_points):
         x, y = src_pts[i]
         x_prime, y_prime = dst_pts[i]
-        A.append([-x, -y, -1, 0, 0, 0, x * x_prime, y * x_prime, x_prime])
-        A.append([0, 0, 0, -x, -y, -1, x * y_prime, y * y_prime, y_prime])
+        A.append([x, y, 1, 0, 0, 0, -x_prime*x, -x_prime*y, -x_prime])
+        A.append([0, 0, 0, x, y, 1, -y_prime*x, -y_prime*y, -y_prime])
     A = np.array(A)
 
     # Solve Ah = 0 using Singular Value Decomposition (SVD)
