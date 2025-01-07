@@ -13,12 +13,16 @@ class CameraInfo:
         self.confidence_map = confidence_map
         self.focal_length = focal_length
 
+        self.K = np.array([[focal_length, 0, rgb_frame.shape[0] // 2],
+                           [0, focal_length, rgb_frame.shape[1] // 2],
+                           [0, 0, 1]])
+
 class SceneData:
     def __init__(self, image_features: ImageFeatures, camera_info: CameraInfo):
         self.image_features = image_features
         self.camera_info = camera_info
 
-    def as_point_cloud(self):
+    def as_point_cloud(self, confidence_threshold=0.95):
         height, width, _ = self.camera_info.rgb_frame.shape
 
         # Generate pixel grid
@@ -40,7 +44,7 @@ class SceneData:
         conf_flat_normalized = conf_flat / np.max(conf_flat) # Normalize to [0, 1]
 
         # Mask out invalid points (e.g., where depth is zero or negative)
-        valid_mask = Z.flatten() > 0 & (conf_flat_normalized > 0.96)
+        valid_mask = Z.flatten() > 0 & (conf_flat_normalized > confidence_threshold)
         points = points[valid_mask]
         colors = colors[valid_mask]
 
