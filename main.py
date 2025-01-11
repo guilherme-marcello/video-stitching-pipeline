@@ -1,20 +1,17 @@
 import argparse
-import numpy as np
-import os
 from scipy.io import loadmat, savemat
-import matplotlib.pyplot as plt
 
 from video import EnrichedVideo, EnrichedFrame
 from vision import compute_homography
 
-class Q11Config:
+class Config:
     def __init__(self, kp, map, i):
         self.keypoint_matches = kp
         self.google_maps_image = map
         self.input_dir = i
         
 
-def parse_args() -> Q11Config:
+def parse_args() -> Config:
     """
     Parses command-line arguments for the video processing pipeline.
 
@@ -25,7 +22,7 @@ def parse_args() -> Q11Config:
         None
 
     Returns:
-        Q11Config: An object containing the parsed arguments as a Q1.1 config.
+        Config: An object containing the parsed arguments config.
             - keypoint_matches (-kp): Path to the keypoint matches file. 
                                      Defaults to "kp_gmaps.mat".
             - google_maps_image (-map): Path to the Google Maps image. 
@@ -42,7 +39,7 @@ def parse_args() -> Q11Config:
                         help="Directory containing video frames and YOLO detections.")
     return parser.parse_args()
 
-def main(config: Q11Config):
+def main(config: Config):
     # load detections and frames as a "video" object
     print(f"Loading files in {config.input_dir}, this may take a while...")
     video = EnrichedVideo.from_input_directory(config.input_dir)
