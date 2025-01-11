@@ -26,14 +26,14 @@ def parse_args() -> Config:
             - keypoint_matches (-kp): Path to the keypoint matches file. 
                                      Defaults to "kp_gmaps.mat".
             - google_maps_image (-map): Path to the Google Maps image. 
-                                       Defaults to "gmaps_alamedaIST.png".
+                                       Defaults to "gmaps.png".
             - input_dir (-v): Directory containing video frames and YOLO detections.. 
                                     Defaults to the current directory. 
     """
     parser = argparse.ArgumentParser(description="PIV 1.1: Process video frames and YOLO detections.")
     parser.add_argument("--keypoint_matches", "-kp", type=str, default="kp_gmaps.mat",
                         help="Path to keypoint matches file.")
-    parser.add_argument("--google_maps_image", "-map",  type=str, default="gmaps_alamedaIST.png",
+    parser.add_argument("--google_maps_image", "-map",  type=str, default="gmaps.png",
                         help="Path to Google Maps image.")
     parser.add_argument("--input_dir", "-i", type=str, default=".",
                         help="Directory containing video frames and YOLO detections.")
