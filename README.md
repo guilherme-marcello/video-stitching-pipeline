@@ -60,6 +60,44 @@ pip install numpy scipy matplotlib
 
 ---
 
+## Docker Setup
+
+You can also run this project using Docker for a more isolated and consistent environment.
+
+### Build Docker Image
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/guilherme-marcello/video-stitching-pipeline.git
+   cd video-stitching-pipeline
+   ```
+
+2. Build the Docker image:
+   ```bash
+   docker build -t video-processing-pipeline .
+   ```
+
+### Run the Pipeline
+
+1. Prepare your input data and ensure it is located in a directory accessible from your system.
+
+2. Run the Docker container:
+   ```bash
+   docker run -v /path/to/input/data:/data -v /path/to/output:/output video-processing-pipeline \
+       -kp /data/keypoint_matches.mat \
+       -map /data/google_maps_image.png \
+       -i /data \
+       -o /output
+   ```
+
+   - Replace `/path/to/input/data` with the path to your input directory.
+   - Replace `/path/to/output` with the path where you want the output files to be saved.
+   - Adjust the paths for the keypoint matches file and Google Maps image as needed.
+
+3. Output files will be saved in the specified output directory.
+
+---
+
 ## Usage
 
 1. **Prepare Input Data**:
