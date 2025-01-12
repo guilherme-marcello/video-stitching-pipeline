@@ -1,14 +1,16 @@
 import argparse
 from scipy.io import loadmat, savemat
+import os
 
 from video import EnrichedVideo, EnrichedFrame
 from vision import compute_homography
 
 class Config:
-    def __init__(self, kp, map, i):
+    def __init__(self, kp, map, i, o):
         self.keypoint_matches = kp
         self.google_maps_image = map
         self.input_dir = i
+        self.output_dir = o
         
 
 def parse_args() -> Config:
@@ -27,17 +29,22 @@ def parse_args() -> Config:
                                      Defaults to "kp_gmaps.mat".
             - google_maps_image (-map): Path to the Google Maps image. 
                                        Defaults to "gmaps.png".
-            - input_dir (-v): Directory containing video frames and YOLO detections.. 
+            - input_dir (-v): Directory containing video frames and YOLO detections.
                                     Defaults to the current directory. 
+            - output_dir (-o): Directory to save the processed frames and data.
+                                    Defaults to the current directory.
     """
-    parser = argparse.ArgumentParser(description="PIV 1.1: Process video frames and YOLO detections.")
+    parser = argparse.ArgumentParser(description="Process video frames and YOLO detections.")
     parser.add_argument("--keypoint_matches", "-kp", type=str, default="kp_gmaps.mat",
                         help="Path to keypoint matches file.")
     parser.add_argument("--google_maps_image", "-map",  type=str, default="gmaps.png",
                         help="Path to Google Maps image.")
     parser.add_argument("--input_dir", "-i", type=str, default=".",
                         help="Directory containing video frames and YOLO detections.")
-    return parser.parse_args()
+    parser.add_argument("--output_dir", "-o", type=str, default=".",
+                        help="Directory to save the processed frames and data.")
+    args = parser.parse_args()
+    return Config(args.keypoint_matches, args.google_maps_image, args.input_dir, args.output_dir)
 
 def main(config: Config):
     # load detections and frames as a "video" object
@@ -60,12 +67,12 @@ def main(config: Config):
 
     # compute homography!
     H = compute_homography(src_points, dst_points)
-    savemat("homography.mat", {"H": H})
+    savemat(os.path.join(config.output_dir, "homography.mat"), {"H": H})
 
     for frame in video:
         frame: EnrichedFrame
         warped_frame = frame.transform(H)
-        warped_frame.export()    
+        warped_frame.export(output_dir=config.output_dir)    
 
 if __name__ == "__main__":
     config = parse_args()
