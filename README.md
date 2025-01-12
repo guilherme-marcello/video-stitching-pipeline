@@ -77,6 +77,11 @@ You can also run this project using Docker for a more isolated and consistent en
    docker build -t video-processing-pipeline .
    ```
 
+   **Note**: If you don't want to build the Docker image yourself, you can use the prebuilt image available on Docker Hub:
+   ```bash
+   docker pull guilhermemarcelo/video-stitching-pipeline:latest
+   ```
+
 ### Run the Pipeline
 
 1. Prepare your input data and ensure it is located in a directory accessible from your system.
@@ -84,6 +89,15 @@ You can also run this project using Docker for a more isolated and consistent en
 2. Run the Docker container:
    ```bash
    docker run -v /path/to/input/data:/data -v /path/to/output:/output video-processing-pipeline \
+       -kp /data/keypoint_matches.mat \
+       -map /data/google_maps_image.png \
+       -i /data \
+       -o /output
+   ```
+
+   If using the prebuilt image from Docker Hub:
+   ```bash
+   docker run -v /path/to/input/data:/data -v /path/to/output:/output guilhermemarcelo/video-stitching-pipeline:latest \
        -kp /data/keypoint_matches.mat \
        -map /data/google_maps_image.png \
        -i /data \
