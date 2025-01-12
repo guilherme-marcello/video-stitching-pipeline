@@ -47,7 +47,7 @@ This project processes video frames with YOLO object detection and computes a ho
 
 ## Dependencies
 
-- Python 3.8 or higher
+- Python 3.11 or higher
 - NumPy
 - SciPy
 - Matplotlib
